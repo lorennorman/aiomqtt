@@ -229,12 +229,12 @@
 <p>Context managers make it easier to manage resources like network connections or files by ensuring that their teardown logic is always executed – even in case of an exception.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>If your use case does not allow you to use a context manager, you can use the client’s <code class="docutils literal notranslate"><span class="pre">__aenter__</span></code> and <code class="docutils literal notranslate"><span class="pre">__aexit__</span></code> methods directly as a workaround, similar to how you would use manual <code class="docutils literal notranslate"><span class="pre">connect</span></code> and <code class="docutils literal notranslate"><span class="pre">disconnect</span></code> methods.</p>
-<p>With this approach you need to make sure that <code class="docutils literal notranslate"><span class="pre">___aexit___</span></code> is also called in case of an exception. Avoid this workaround if you can, it’s a bit tricky to get right.</p>
+<p>If your use case does not allow you to use a context manager, you can use the client’s <code class="docutils literal notranslate"><span class="pre">__aenter__</span></code> and <code class="docutils literal notranslate"><span class="pre">__aexit__</span></code> methods directly as a workaround, similar to how you would use manual <code class="docutils literal notranslate"><span class="pre">connect</span></code> and <code class="docutils literal notranslate"><span class="pre">disconnect</span></code> methods. With this approach you need to make sure that <code class="docutils literal notranslate"><span class="pre">___aexit___</span></code> is also called in case of an exception. Avoid this workaround if you can, it’s a bit tricky to get right.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Examples use the public <a class="reference external" href="https://test.mosquitto.org/">mosquitto test broker</a>. You can connect to this broker without any credentials. All examples in this documentation are self-contained and runnable as-is.</p>
+<p>Examples use the public <a class="reference external" href="https://test.mosquitto.org/">mosquitto test broker</a>. You can connect to this broker without any credentials. Alternatively, you can spin up a local mosquitto broker with Docker via <code class="docutils literal notranslate"><span class="pre">./scripts/develop</span></code> and connect with <code class="docutils literal notranslate"><span class="pre">aiomqtt.Client(&quot;localhost&quot;,</span> <span class="pre">port=1883)</span></code>.</p>
+<p>All examples in this documentation are self-contained and runnable as-is.</p>
 </div>
 <p>For a list of all available arguments to the client, see the <a class="reference internal" href="developer-interface.html"><span class="doc std std-doc">API reference</span></a>.</p>
 <section id="sharing-the-connection">
