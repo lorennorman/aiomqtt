@@ -226,7 +226,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">payload</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>aiomqtt combines the stability of the time-proven <a class="reference external" href="https://github.com/eclipse/paho.mqtt.python">paho-mqtt</a> library with an intuitive, idiomatic asyncio interface:</p>
+<p>aiomqtt combines the stability of the time-proven <a class="reference external" href="https://github.com/eclipse/paho.mqtt.python">paho-mqtt</a> library with an idiomatic asyncio interface:</p>
 <ul class="simple">
 <li><p>No more callbacks! 👍</p></li>
 <li><p>No more return codes (welcome to the <code class="docutils literal notranslate"><span class="pre">MqttError</span></code>)</p></li>
@@ -237,8 +237,8 @@
 </ul>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h2>
-<p>aiomqtt can be installed via <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">aiomqtt</span></code>. It requires Python <code class="docutils literal notranslate"><span class="pre">3.8+</span></code> to run. The only dependency is <a class="reference external" href="https://github.com/eclipse/paho.mqtt.python">paho-mqtt</a>.</p>
-<p>If you can’t wait for the latest version and want to install directly from GitHub, use:</p>
+<p>aiomqtt can be installed via <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">aiomqtt</span></code>. The only dependency is <a class="reference external" href="https://github.com/eclipse/paho.mqtt.python">paho-mqtt</a>.</p>
+<p>If you can’t wait for the latest version, you can install aiomqtt directly from GitHub with:</p>
 <p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/sbtinstruments/aiomqtt</span></code></p>
 <section id="note-for-windows-users">
 <h3>Note for Windows users<a class="headerlink" href="#note-for-windows-users" title="Permalink to this heading">#</a></h3>
@@ -264,7 +264,7 @@
 </section>
 <section id="contributing">
 <h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">#</a></h2>
-<p>We’re very happy about contributions to the project! You can get started by reading <a class="reference external" href="https://github.com/sbtinstruments/aiomqtt/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>.</p>
+<p>We’re very happy about contributions to aiomqtt! ✨ You can get started by reading <a class="reference external" href="https://github.com/sbtinstruments/aiomqtt/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>.</p>
 </section>
 <section id="versioning">
 <h2>Versioning<a class="headerlink" href="#versioning" title="Permalink to this heading">#</a></h2>
@@ -278,12 +278,12 @@
 <h2>Related projects<a class="headerlink" href="#related-projects" title="Permalink to this heading">#</a></h2>
 <p>Is aiomqtt not what you’re looking for? There are a few other clients you can try:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/eclipse/paho.mqtt.python">paho-mqtt</a> — Own protocol implementation. Synchronous.<br><img alt="GitHub stars" src="https://img.shields.io/github/stars/eclipse/paho.mqtt.python" /> <img alt="license" src="https://img.shields.io/github/license/eclipse/paho.mqtt.python" /></p></li>
-<li><p><a class="reference external" href="https://github.com/wialon/gmqtt">gmqtt</a> — Own protocol implementation. Asynchronous.<br><img alt="GitHub stars" src="https://img.shields.io/github/stars/wialon/gmqtt" /> <img alt="license" src="https://img.shields.io/github/license/wialon/gmqtt" /></p></li>
-<li><p><a class="reference external" href="https://github.com/sabuhish/fastapi-mqtt">fastapi-mqtt</a> — Asynchronous wrapper around gmqtt. Simplifies integration in your FastAPI application.<br><img alt="GitHub stars" src="https://img.shields.io/github/stars/sabuhish/fastapi-mqtt" /> <img alt="license" src="https://img.shields.io/github/license/sabuhish/fastapi-mqtt" /></p></li>
-<li><p><a class="reference external" href="https://github.com/Yakifo/amqtt">amqtt</a> — Own protocol implementation. Asynchronous. Includes a broker.<br><img alt="GitHub stars" src="https://img.shields.io/github/stars/Yakifo/amqtt" /> <img alt="license" src="https://img.shields.io/github/license/Yakifo/amqtt" /></p></li>
-<li><p><a class="reference external" href="https://github.com/eerimoq/mqttools">mqttools</a> — Own protocol implementation. Asynchronous.<br><img alt="GitHub stars" src="https://img.shields.io/github/stars/eerimoq/mqttools" /> <img alt="license" src="https://img.shields.io/github/license/eerimoq/mqttools" /></p></li>
-<li><p><a class="reference external" href="https://github.com/bkanuka/trio-paho-mqtt">trio-paho-mqtt</a> — Asynchronous wrapper around paho-mqtt (similar to aiomqtt). Based on trio instead of asyncio.<br><img alt="GitHub stars" src="https://img.shields.io/github/stars/bkanuka/trio-paho-mqtt" /> <img alt="license" src="https://img.shields.io/github/license/bkanuka/trio-paho-mqtt" /></p></li>
+<li><p><a class="reference external" href="https://github.com/eclipse/paho.mqtt.python">paho-mqtt</a>: Synchronous.</p></li>
+<li><p><a class="reference external" href="https://github.com/peterhinch/micropython-mqtt">micropython-mqtt</a>: Asynchronous client for microcontrollers in MicroPython.</p></li>
+<li><p><a class="reference external" href="https://github.com/wialon/gmqtt">gmqtt</a>: Asynchronous.</p></li>
+<li><p><a class="reference external" href="https://github.com/sabuhish/fastapi-mqtt">fastapi-mqtt</a>: Asynchronous wrapper around gmqtt; Simplifies integration with FastAPI.</p></li>
+<li><p><a class="reference external" href="https://github.com/Yakifo/amqtt">amqtt</a>: Asynchronous; Includes a broker.</p></li>
+<li><p><a class="reference external" href="https://github.com/bkanuka/trio-paho-mqtt">trio-paho-mqtt</a>: Asynchronous wrapper around paho-mqtt; Based on trio instead of asyncio.</p></li>
 </ul>
 <div class="toctree-wrapper compound">
 </div>

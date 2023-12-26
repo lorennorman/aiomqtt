@@ -261,6 +261,10 @@
 <p class="admonition-title">Note</p>
 <p>This is a combination of some concepts addressed in more detail in other sections: The connection is shared between the listener task and the routes, as explained in <a class="reference internal" href="connecting-to-the-broker.html#sharing-the-connection"><span class="std std-ref">Sharing the connection</span></a>. We don’t immediately await the listener task in order to avoid blocking other code, as explained in <a class="reference internal" href="subscribing-to-a-topic.html#listening-without-blocking"><span class="std std-ref">Listening without blocking</span></a>.</p>
 </div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>With Starlette you can yield the initialized client to <a class="reference external" href="https://www.starlette.io/lifespan/">the lifespan’s state</a> instead of using global variables.</p>
+</div>
 </section>
 
         </article>

@@ -231,11 +231,11 @@
 <p>Now you can use the <a class="reference internal" href="publishing-a-message.html"><span class="std std-doc">minimal publisher example</span></a> to publish a message to <code class="docutils literal notranslate"><span class="pre">temperature/outside</span></code> and see it appear in the console.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>You can set the <a class="reference internal" href="publishing-a-message.html#quality-of-service-qos"><span class="std std-ref">Quality of Service</span></a> of the subscription by passing the <code class="docutils literal notranslate"><span class="pre">qos</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">subscribe()</span></code>.</p>
+<p>You can set the <a class="reference internal" href="publishing-a-message.html#quality-of-service-qos"><span class="std std-ref">Quality of Service</span></a> of the subscription by passing the <code class="docutils literal notranslate"><span class="pre">qos</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">Client.subscribe()</span></code>.</p>
 </div>
 <section id="filtering-messages">
 <h2>Filtering messages<a class="headerlink" href="#filtering-messages" title="Permalink to this heading">#</a></h2>
-<p>Imagine that we measure temperature and humidity on the outside and inside, and our topics have the structure <code class="docutils literal notranslate"><span class="pre">temperature/outside</span></code>. We want to receive all types of measurements but handle them differently.</p>
+<p>Imagine that we measure temperature and humidity on the outside and inside. We want to receive all types of measurements but handle them differently.</p>
 <p>aiomqtt provides <code class="docutils literal notranslate"><span class="pre">Topic.matches()</span></code> to make this easy:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">aiomqtt</span>
@@ -269,10 +269,10 @@
 </section>
 <section id="the-message-queue">
 <h2>The message queue<a class="headerlink" href="#the-message-queue" title="Permalink to this heading">#</a></h2>
-<p>Messages are buffered in a queue internally and handled one after another.</p>
-<p>The default queue is <code class="docutils literal notranslate"><span class="pre">asyncio.Queue</span></code> which returns messages on a FIFO (“first in first out”) basis. You can pass <a class="reference external" href="https://docs.python.org/3/library/asyncio-queue.html">other asyncio queues</a> as <code class="docutils literal notranslate"><span class="pre">queue_class</span></code> to <code class="docutils literal notranslate"><span class="pre">messages()</span></code> to modify the order in which messages are returned, e.g. <code class="docutils literal notranslate"><span class="pre">asyncio.LifoQueue</span></code>.</p>
-<p>If you want to queue based on priority, you can subclass <code class="docutils literal notranslate"><span class="pre">asyncio.PriorityQueue</span></code>. This queue returns messages in priority order (lowest priority first). In case of ties, messages with lower message identifiers are returned first.</p>
-<p>Let’s say we measure temperature and humidity again, but we want to prioritize humidity messages:</p>
+<p>Messages are queued and returned sequentially from <code class="docutils literal notranslate"><span class="pre">Client.messages()</span></code>.</p>
+<p>The default queue is <code class="docutils literal notranslate"><span class="pre">asyncio.Queue</span></code> which returns messages on a FIFO (“first in first out”) basis. You can pass <a class="reference external" href="https://docs.python.org/3/library/asyncio-queue.html">other types of asyncio queues</a> as <code class="docutils literal notranslate"><span class="pre">queue_class</span></code> to <code class="docutils literal notranslate"><span class="pre">Client.messages()</span></code> to modify the order in which messages are returned, e.g. <code class="docutils literal notranslate"><span class="pre">asyncio.LifoQueue</span></code>.</p>
+<p>You can subclass <code class="docutils literal notranslate"><span class="pre">asyncio.PriorityQueue</span></code> to queue based on priority. Messages are returned ascendingly by their priority values. In the case of ties, messages with lower message identifiers are returned first.</p>
+<p>Let’s say we measure temperature and humidity again, but we want to prioritize humidity:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">aiomqtt</span>
 
@@ -302,11 +302,13 @@
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>By default, the size of the queue is unlimited. You can limit it by passing the <code class="docutils literal notranslate"><span class="pre">queue_maxsize</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">messages()</span></code>.</p>
+<p>By default, the size of the queue is unlimited. You can set a limit by passing the <code class="docutils literal notranslate"><span class="pre">queue_maxsize</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">Client.messages()</span></code>.</p>
 </div>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>If a message takes a long time to handle, it blocks the handling of other messages. You can handle messages in parallel by using an <code class="docutils literal notranslate"><span class="pre">asyncio.TaskGroup</span></code> like so:</p>
+</section>
+<section id="processing-concurrently">
+<h2>Processing concurrently<a class="headerlink" href="#processing-concurrently" title="Permalink to this heading">#</a></h2>
+<p>Messages are queued and returned sequentially from <code class="docutils literal notranslate"><span class="pre">Client.messages()</span></code>. If a message takes a long time to handle, it blocks the handling of other messages.</p>
+<p>You can handle messages concurrently by using an <code class="docutils literal notranslate"><span class="pre">asyncio.TaskGroup</span></code> like so:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">aiomqtt</span>
 
@@ -322,18 +324,70 @@
             <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s2">&quot;temperature/#&quot;</span><span class="p">)</span>
             <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TaskGroup</span><span class="p">()</span> <span class="k">as</span> <span class="n">tg</span><span class="p">:</span>
                 <span class="k">async</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
-                    <span class="n">tg</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">handle</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+                    <span class="n">tg</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">handle</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>  <span class="c1"># Spawn new coroutine</span>
 
 
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
 </pre></div>
 </div>
-<p>Note that this only makes sense if your message handling is I/O-bound. If it’s CPU-bound, you should spawn multiple processes instead.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Coroutines only make sense if your message handling is I/O-bound. If it’s CPU-bound, you should spawn multiple processes instead.</p>
+</div>
+<p>The code snippet above handles each message in a new coroutine. Sometimes, we want to handle messages from different topics concurrently, but sequentially inside a single topic.</p>
+<p>The idea here is to implement a “distributor” that sorts incoming messages into multiple asyncio queues. Each queue is then processed by a different coroutine. Let’s see how this works for our temperature and humidity messages:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">aiomqtt</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">temperature_consumer</span><span class="p">():</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="k">await</span> <span class="n">temperature_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[temperature/#] </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">payload</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">humidity_consumer</span><span class="p">():</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="k">await</span> <span class="n">humidity_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[humidity/#] </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">payload</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="n">temperature_queue</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+<span class="n">humidity_queue</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">distributor</span><span class="p">(</span><span class="n">client</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="p">()</span> <span class="k">as</span> <span class="n">messages</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s2">&quot;temperature/#&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s2">&quot;humidity/#&quot;</span><span class="p">)</span>
+        <span class="c1"># Sort messages into the appropriate queues</span>
+        <span class="k">async</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">topic</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="s2">&quot;temperature/#&quot;</span><span class="p">):</span>
+                <span class="n">temperature_queue</span><span class="o">.</span><span class="n">put_nowait</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">message</span><span class="o">.</span><span class="n">topic</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="s2">&quot;humidity/#&quot;</span><span class="p">):</span>
+                <span class="n">humidity_queue</span><span class="o">.</span><span class="n">put_nowait</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">aiomqtt</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="s2">&quot;test.mosquitto.org&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+        <span class="c1"># Use a task group to manage and await all tasks</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TaskGroup</span><span class="p">()</span> <span class="k">as</span> <span class="n">tg</span><span class="p">:</span>
+            <span class="n">tg</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">distributor</span><span class="p">(</span><span class="n">client</span><span class="p">))</span>
+            <span class="n">tg</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">temperature_consumer</span><span class="p">())</span>
+            <span class="n">tg</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">humidity_consumer</span><span class="p">())</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can combine this idea with the one <a class="reference internal" href="#the-message-queue">from the previous section</a> to e.g. handle temperature in FIFO and humidity in LIFO order.</p>
 </div>
 </section>
 <section id="listening-without-blocking">
 <h2>Listening without blocking<a class="headerlink" href="#listening-without-blocking" title="Permalink to this heading">#</a></h2>
-<p>When you run the minimal example for subscribing and listening for messages, you’ll notice that the program doesn’t finish. Waiting for messages through the <code class="docutils literal notranslate"><span class="pre">messages()</span></code> generator blocks the execution of everything that comes afterward.</p>
+<p>When you run the minimal example for subscribing and listening for messages, you’ll notice that the program doesn’t finish. Waiting for messages through the <code class="docutils literal notranslate"><span class="pre">Client.messages()</span></code> generator blocks the execution of everything that comes afterward.</p>
 <p>In case you want to run other code after starting your listener, this is not very practical.</p>
 <p>You can use <code class="docutils literal notranslate"><span class="pre">asyncio.TaskGroup</span></code> (or <code class="docutils literal notranslate"><span class="pre">asyncio.gather</span></code> for Python <code class="docutils literal notranslate"><span class="pre">&lt;3.11</span></code>) to safely run other tasks alongside the MQTT listener:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
@@ -341,6 +395,7 @@
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">sleep</span><span class="p">(</span><span class="n">seconds</span><span class="p">):</span>
+    <span class="c1"># Some other task that needs to run concurrently</span>
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Slept for </span><span class="si">{</span><span class="n">seconds</span><span class="si">}</span><span class="s2"> seconds!&quot;</span><span class="p">)</span>
 
@@ -368,7 +423,7 @@
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
 <p>You need to be a bit careful with this approach. Exceptions raised in asyncio tasks are propagated only when we <code class="docutils literal notranslate"><span class="pre">await</span></code> the task. In this case, we explicitly don’t.</p>
-<p>This means that you need to handle all possible exceptions <em>inside</em> the fire-and-forget task. Any unhandled exceptions will be silently ignored until the program exits.</p>
+<p>You need to handle all possible exceptions <em>inside</em> the fire-and-forget task. Unhandled exceptions will be silently ignored until the program exits.</p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">aiomqtt</span>
@@ -408,7 +463,7 @@
 </section>
 <section id="stop-listening">
 <h2>Stop listening<a class="headerlink" href="#stop-listening" title="Permalink to this heading">#</a></h2>
-<p>You might want to have a listener task running alongside other code, and then stop it when you’re done. You can use <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.Task.cancel"><code class="docutils literal notranslate"><span class="pre">Task.cancel()</span></code></a> for this:</p>
+<p>You might want to have a listener task running alongside other code, and then stop it when you’re done. You can use <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.Task.cancel"><code class="docutils literal notranslate"><span class="pre">asyncio.Task.cancel()</span></code></a> for this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">aiomqtt</span>
 
@@ -536,6 +591,7 @@
 <li><a class="reference internal" href="#">Subscribing to a topic</a><ul>
 <li><a class="reference internal" href="#filtering-messages">Filtering messages</a></li>
 <li><a class="reference internal" href="#the-message-queue">The message queue</a></li>
+<li><a class="reference internal" href="#processing-concurrently">Processing concurrently</a></li>
 <li><a class="reference internal" href="#listening-without-blocking">Listening without blocking</a></li>
 <li><a class="reference internal" href="#stop-listening">Stop listening</a></li>
 <li><a class="reference internal" href="#stop-listening-after-timeout">Stop listening after timeout</a></li>
