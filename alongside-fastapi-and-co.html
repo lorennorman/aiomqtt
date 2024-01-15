@@ -166,15 +166,16 @@
 <li class="toctree-l1"><a class="reference internal" href="reconnection.html">Reconnection</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Alongside FastAPI &amp; Co.</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<p class="caption" role="heading"><span class="caption-text">reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="developer-interface.html">Developer interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration-guide-v2.html">Migration guide: v2.0.0</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/sbtinstruments/aiomqtt">GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/sbtinstruments/aiomqtt/issues">Issue tracker</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/sbtinstruments/aiomqtt/discussions">Discussions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/sbtinstruments/aiomqtt/blob/main/CHANGELOG.md">Changelog</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/sbtinstruments/aiomqtt/blob/main/CONTRIBUTING.md">Contributing</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/aiomqtt/">PyPI</a></li>
 </ul>
@@ -222,10 +223,8 @@
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="n">client</span><span class="p">):</span>
-    <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="p">()</span> <span class="k">as</span> <span class="n">messages</span><span class="p">:</span>
-        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s2">&quot;humidity/#&quot;</span><span class="p">)</span>
-        <span class="k">async</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">payload</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">payload</span><span class="p">)</span>
 
 
 <span class="n">client</span> <span class="o">=</span> <span class="kc">None</span>
@@ -238,6 +237,7 @@
         <span class="c1"># Make client globally available</span>
         <span class="n">client</span> <span class="o">=</span> <span class="n">c</span>
         <span class="c1"># Listen for MQTT messages in (unawaited) asyncio task</span>
+        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s2">&quot;humidity/#&quot;</span><span class="p">)</span>
         <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
         <span class="n">task</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">listen</span><span class="p">(</span><span class="n">client</span><span class="p">))</span>
         <span class="k">yield</span>

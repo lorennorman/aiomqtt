@@ -166,15 +166,16 @@
 <li class="toctree-l1"><a class="reference internal" href="reconnection.html">Reconnection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="alongside-fastapi-and-co.html">Alongside FastAPI &amp; Co.</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<p class="caption" role="heading"><span class="caption-text">reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="developer-interface.html">Developer interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration-guide-v2.html">Migration guide: v2.0.0</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/sbtinstruments/aiomqtt">GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/sbtinstruments/aiomqtt/issues">Issue tracker</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/sbtinstruments/aiomqtt/discussions">Discussions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/sbtinstruments/aiomqtt/blob/main/CHANGELOG.md">Changelog</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/sbtinstruments/aiomqtt/blob/main/CONTRIBUTING.md">Contributing</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/aiomqtt/">PyPI</a></li>
 </ul>
@@ -230,7 +231,7 @@
 <p>Context managers make it easier to manage resources like network connections or files by ensuring that their teardown logic is always executed – even in case of an exception.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>If your use case does not allow you to use a context manager, you can use the client’s <code class="docutils literal notranslate"><span class="pre">__aenter__</span></code> and <code class="docutils literal notranslate"><span class="pre">__aexit__</span></code> methods directly as a workaround, similar to how you would use manual <code class="docutils literal notranslate"><span class="pre">connect</span></code> and <code class="docutils literal notranslate"><span class="pre">disconnect</span></code> methods. With this approach you need to make sure that <code class="docutils literal notranslate"><span class="pre">___aexit___</span></code> is also called in case of an exception. Avoid this workaround if you can, it’s a bit tricky to get right.</p>
+<p>If your use case does not allow you to use a context manager, you can use the client’s <code class="docutils literal notranslate"><span class="pre">__aenter__</span></code> and <code class="docutils literal notranslate"><span class="pre">__aexit__</span></code> methods to connect and disconnect as a workaround. With this approach you need to ensure yourself that <code class="docutils literal notranslate"><span class="pre">___aexit___</span></code> is also called in case of an exception. Avoid this workaround if you can, it’s a bit tricky to get right.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
