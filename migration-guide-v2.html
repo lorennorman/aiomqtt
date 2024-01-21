@@ -263,7 +263,23 @@
 <section id="changes-to-the-message-queue">
 <h2>Changes to the message queue<a class="headerlink" href="#changes-to-the-message-queue" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">filtered_messages</span></code>, <code class="docutils literal notranslate"><span class="pre">unfiltered_messages</span></code>, and <code class="docutils literal notranslate"><span class="pre">messages</span></code> methods have been removed and replaced with a single client-wide message queue.</p>
-<p>A minimal example of printing all messages (unfiltered) looks like this:</p>
+<p>For previous versions, a minimal example of printing all messages (unfiltered) looked like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">aiomqtt</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">aiomqtt</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="s2">&quot;test.mosquitto.org&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s2">&quot;temperature/#&quot;</span><span class="p">)</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="p">()</span> <span class="k">as</span> <span class="n">messages</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">payload</span><span class="p">)</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>We now no longer need the line <code class="docutils literal notranslate"><span class="pre">async</span> <span class="pre">with</span> <span class="pre">client.messages()</span> <span class="pre">as</span> <span class="pre">messages:</span></code>, but instead access the message generator directly with <code class="docutils literal notranslate"><span class="pre">client.messages</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">aiomqtt</span>
 
