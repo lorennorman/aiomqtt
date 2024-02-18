@@ -270,7 +270,7 @@
 <section id="the-message-queue">
 <h2>The message queue<a class="headerlink" href="#the-message-queue" title="Permalink to this heading">#</a></h2>
 <p>Messages are queued internally and returned sequentially from <code class="docutils literal notranslate"><span class="pre">Client.messages</span></code>.</p>
-<p>The default queue is <code class="docutils literal notranslate"><span class="pre">asyncio.Queue</span></code> which returns messages on a FIFO (“first in first out”) basis. You can pass <a class="reference external" href="https://docs.python.org/3/library/asyncio-queue.html">other types of asyncio queues</a> as <code class="docutils literal notranslate"><span class="pre">queue_class</span></code> to the <code class="docutils literal notranslate"><span class="pre">Client</span></code> to modify the order in which messages are returned, e.g. <code class="docutils literal notranslate"><span class="pre">asyncio.LifoQueue</span></code>.</p>
+<p>The default queue is <code class="docutils literal notranslate"><span class="pre">asyncio.Queue</span></code> which returns messages on a FIFO (“first in first out”) basis. You can pass <a class="reference external" href="https://docs.python.org/3/library/asyncio-queue.html">other types of asyncio queues</a> as <code class="docutils literal notranslate"><span class="pre">queue_type</span></code> to the <code class="docutils literal notranslate"><span class="pre">Client</span></code> to modify the order in which messages are returned, e.g. <code class="docutils literal notranslate"><span class="pre">asyncio.LifoQueue</span></code>.</p>
 <p>You can subclass <code class="docutils literal notranslate"><span class="pre">asyncio.PriorityQueue</span></code> to queue based on priority. Messages are returned ascendingly by their priority values. In the case of ties, messages with lower message identifiers are returned first.</p>
 <p>Let’s say we measure temperature and humidity again, but we want to prioritize humidity:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
@@ -290,7 +290,7 @@
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="k">async</span> <span class="k">with</span> <span class="n">aiomqtt</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span>
-        <span class="s2">&quot;test.mosquitto.org&quot;</span><span class="p">,</span> <span class="n">queue_class</span><span class="o">=</span><span class="n">CustomPriorityQueue</span>
+        <span class="s2">&quot;test.mosquitto.org&quot;</span><span class="p">,</span> <span class="n">queue_type</span><span class="o">=</span><span class="n">CustomPriorityQueue</span>
     <span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
         <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s2">&quot;temperature/#&quot;</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s2">&quot;humidity/#&quot;</span><span class="p">)</span>
@@ -303,7 +303,7 @@
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>By default, the size of the queue is unlimited. You can set a limit by passing the <code class="docutils literal notranslate"><span class="pre">queue_maxsize</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">Client.messages()</span></code>.</p>
+<p>By default, the size of the queue is unlimited. You can set a limit through the client’s <code class="docutils literal notranslate"><span class="pre">max_queued_incoming_messages</span></code> argument.</p>
 </div>
 </section>
 <section id="processing-concurrently">
