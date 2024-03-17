@@ -214,7 +214,7 @@
         <article role="main">
           <section id="subscribing-to-a-topic">
 <h1>Subscribing to a topic<a class="headerlink" href="#subscribing-to-a-topic" title="Permalink to this heading">#</a></h1>
-<p>To receive messages for a topic, we need to subscribe to it. Incoming messages are queued internally. You can use the <code class="docutils literal notranslate"><span class="pre">Client.message</span></code> generator to iterate over incoming messages. This is a minimal working example that listens for messages to the <code class="docutils literal notranslate"><span class="pre">temperature/#</span></code> wildcard:</p>
+<p>To receive messages for a topic, we need to subscribe to it. Incoming messages are queued internally. You can use the <code class="docutils literal notranslate"><span class="pre">Client.messages</span></code> generator to iterate over incoming messages. This is a minimal working example that listens for messages to the <code class="docutils literal notranslate"><span class="pre">temperature/#</span></code> wildcard:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">aiomqtt</span>
 
@@ -237,7 +237,7 @@
 <section id="filtering-messages">
 <h2>Filtering messages<a class="headerlink" href="#filtering-messages" title="Permalink to this heading">#</a></h2>
 <p>Imagine that we measure temperature and humidity on the outside and inside. We want to receive all types of measurements but handle them differently.</p>
-<p>aiomqtt provides <code class="docutils literal notranslate"><span class="pre">Topic.matches()</span></code> to make this easy:</p>
+<p>You can filter messages with <code class="docutils literal notranslate"><span class="pre">Topic.matches()</span></code>. Similar to <code class="docutils literal notranslate"><span class="pre">Client.subscribe()</span></code>, <code class="docutils literal notranslate"><span class="pre">Topic.matches()</span></code> also accepts wildcards (e.g. <code class="docutils literal notranslate"><span class="pre">temperature/#</span></code>):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">aiomqtt</span>
 
@@ -248,11 +248,11 @@
         <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s2">&quot;humidity/#&quot;</span><span class="p">)</span>
         <span class="k">async</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">topic</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="s2">&quot;humidity/inside&quot;</span><span class="p">):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[humidity/inside] </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">payload</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;A:&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">payload</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">topic</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="s2">&quot;+/outside&quot;</span><span class="p">):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[+/outside] </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">payload</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;B:&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">payload</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">topic</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="s2">&quot;temperature/#&quot;</span><span class="p">):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[temperature/#] </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">payload</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;C:&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">payload</span><span class="p">)</span>
 
 
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
@@ -498,7 +498,7 @@
 </section>
 <section id="stop-listening-after-timeout">
 <h2>Stop listening after timeout<a class="headerlink" href="#stop-listening-after-timeout" title="Permalink to this heading">#</a></h2>
-<p>For use cases where you only want to listen to messages for a certain amount of time, Python <code class="docutils literal notranslate"><span class="pre">3.11</span></code> introduced a neat feature called <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#timeouts">timeouts</a>:</p>
+<p>For use cases where you only want to listen to messages for a certain amount of time, we can use <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#timeouts">asyncio’s timeouts</a>, which were introduced in Python <code class="docutils literal notranslate"><span class="pre">3.11</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">aiomqtt</span>
 
