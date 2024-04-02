@@ -252,7 +252,7 @@ class Client:
 
         # Create the underlying paho-mqtt client instance
         self._client: mqtt.Client = mqtt.Client(
-            callback_api_version=CallbackAPIVersion.VERSION1,
+            callback_api_version=CallbackAPIVersion.VERSION2,
             client_id=identifier,  # type: ignore[arg-type]
             protocol=protocol,
             clean_session=clean_session,
